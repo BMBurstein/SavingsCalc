@@ -1,0 +1,10 @@
+#planBase,
+#goalBase {
+  display: none;
+}
+
+button,
+input {
+  font-family: inherit;
+  font-size: 100%;
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(() => document.getElementById("submit").disabled = false);
+  </script>
+  <script src="script.js" defer></script>
+  <title>מחשבון חיסכון</title>
+</head>
+
+<body>
+  <form method="get" id="form">
+    <div id="chart"></div>
+    <table id="goals">
+      <caption>יעדים</caption>
+      <thead>
+        <tr>
+          <th>מטרה</th>
+          <th>שנה</th>
+          <th>סכום</th>
+          <th>
+            <input type="button" value="+" onclick="addGoal()">
+          </th>
+        </tr>
+      </thead>
+      <tbody> </tbody>
+    </table>
+
+    <table id="plans">
+      <caption>תוכניות</caption>
+      <thead>
+        <tr>
+          <th>תוכנית</th>
+          <th>שנת התחלה</th>
+          <th>סכום התחלתי</th>
+          <th>הפקדה חודשית</th>
+          <th>ריבית שנתית</th>
+          <th>הצג</th>
+          <th>
+            <input type="button" value="+" onclick="addPlan()">
+          </th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <input type="submit" value="השווה" id="submit" disabled>
+  </form>
+</body>
+
+</html>
