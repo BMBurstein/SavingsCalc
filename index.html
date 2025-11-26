@@ -1,56 +1,1144 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://www.gstatic.com/charts/loader.js"></script>
-  <script>
-    google.charts.load('current', { packages: ['corechart'] });
-    google.charts.setOnLoadCallback(() => document.getElementById("submit").disabled = false);
-  </script>
-  <script src="script.js" defer></script>
-  <title>מחשבון חיסכון</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Investment Plans & Goals</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #111827;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --border: #1f2937;
+            --danger: #ef4444;
+            --danger-bg: #1b0c0c;
+            --tooltip-bg: #0b1429;
+            --tooltip-border: #293042;
+            --zero-line: #e5e7eb;
+            --success-1: #10b981;
+            --success-2: #047857;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Hebrew", "Rubik", "Assistant", Arial, sans-serif;
+            background: linear-gradient(180deg, #0b1020, var(--bg));
+            color: var(--text);
+            transition: direction .2s ease;
+        }
+
+        body[dir="rtl"] {
+            direction: rtl;
+        }
+
+        header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(6px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            gap: .75rem;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        header .lang {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        header select {
+            padding: 0.45rem 0.6rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #0b1429;
+            color: var(--text);
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        @media (max-width: 860px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: linear-gradient(180deg, #111827, #0b1328);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.05rem;
+            color: #cbd5e1;
+        }
+
+        .section-actions {
+            display: inline-flex;
+            gap: .5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.85rem;
+            border: 1px solid var(--border);
+            background: linear-gradient(180deg, #1d49af, #112b66);
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s ease, border-color 0.15s ease;
+            font-size: .92rem;
+        }
+
+        .btn:hover {
+            background: linear-gradient(180deg, #2970e1, #1d49af);
+            border-color: #2970e1;
+        }
+
+        .btn-danger {
+            background: linear-gradient(180deg, #ef4444, #b91c1c);
+            border-color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(180deg, #f87171, #ef4444);
+        }
+
+        .btn-success {
+            background: linear-gradient(180deg, var(--success-1), var(--success-2));
+            border-color: var(--success-1);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(180deg, #34d399, var(--success-1));
+            border-color: #34d399;
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: .5rem;
+        }
+
+        .item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.75rem;
+            align-items: start;
+            padding: 0.6rem 0.7rem;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            background: #0a1122;
+        }
+
+        .item.invalid {
+            border: 1px solid var(--danger);
+            background: var(--danger-bg);
+        }
+
+        .item .header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.4rem;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        .badge-invalid {
+            color: #fecaca;
+            background: #7f1d1d;
+            border: 1px solid #b91c1c;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            margin-inline-start: 0.5rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .name-input {
+            width: 60%;
+            max-width: 240px;
+            background: #0b1223;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            padding: 0.3rem 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 1px solid #0006;
+            display: inline-block;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .meta-grid input {
+            width: 100%;
+            padding: 0.45rem 0.6rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #0b1223;
+            color: var(--text);
+        }
+
+        canvas {
+            width: 100%;
+            height: 580px;
+            background: #0a1222;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            direction: ltr;
+            /* chart always LTR */
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1rem;
+            align-items: center;
+            margin-top: 0.75rem;
+        }
+
+        .legend .entry {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        .legend .swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 1px solid #0006;
+            display: inline-block;
+        }
+
+        .footer-tools {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            align-items: stretch;
+            margin-top: .75rem;
+        }
+
+        .urlbox {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: .5rem;
+        }
+
+        #exportUrl {
+            width: 100%;
+            padding: .45rem .6rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #0b1223;
+            color: var(--text);
+        }
+
+        .hint {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-top: 0.4rem;
+        }
+
+        .tooltip {
+            position: absolute;
+            pointer-events: none;
+            background: var(--tooltip-bg);
+            border: 1px solid var(--tooltip-border);
+            border-radius: 8px;
+            padding: 0.5rem 0.6rem;
+            font-size: 0.85rem;
+            color: var(--text);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            z-index: 5;
+            display: none;
+        }
+
+        .tooltip .title {
+            color: #cbd5e1;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .tooltip .row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin: 0.1rem 0;
+        }
+
+        .tooltip .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid #0006;
+            display: inline-block;
+        }
+    </style>
 </head>
 
-<body>
-  <form method="get" id="form">
-    <div id="chart"></div>
-    <table id="goals">
-      <caption>יעדים</caption>
-      <thead>
-        <tr>
-          <th>מטרה</th>
-          <th>שנה</th>
-          <th>סכום</th>
-          <th>
-            <input type="button" value="+" onclick="addGoal()">
-          </th>
-        </tr>
-      </thead>
-      <tbody> </tbody>
-    </table>
+<body dir="ltr">
+    <header>
+        <h1 id="title">Investment Plans & Goals</h1>
+        <div class="lang">
+            <label for="langSelect" id="langLabel">Language:</label>
+            <select id="langSelect">
+                <option value="en">English</option>
+                <option value="he">עברית</option>
+            </select>
+            <button class="btn btn-danger" id="btn-reset" style="margin-left:0.5rem;">Reset</button>
+        </div>
+    </header>
 
-    <table id="plans">
-      <caption>תוכניות</caption>
-      <thead>
-        <tr>
-          <th>תוכנית</th>
-          <th>שנת התחלה</th>
-          <th>סכום התחלתי</th>
-          <th>הפקדה חודשית</th>
-          <th>ריבית שנתית</th>
-          <th>הצג</th>
-          <th>
-            <input type="button" value="+" onclick="addPlan()">
-          </th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <input type="submit" value="השווה" id="submit" disabled>
-  </form>
+    <main>
+        <!-- Left: Inputs -->
+        <section class="card">
+            <div class="section-header">
+                <h2 id="settingsTitle">Settings</h2>
+            </div>
+            <div class="row">
+                <div>
+                    <label for="startYear" id="startYearLabel">Starting year</label>
+                    <input id="startYear" type="number" min="1900" placeholder="YYYY" />
+                </div>
+            </div>
+
+            <hr style="border-color: var(--border); margin: 1rem 0;" />
+
+            <div class="section-header">
+                <h2 id="plansTitle">Investment Plans</h2>
+                <div class="section-actions">
+                    <button class="btn btn-success" id="btn-add-plan">Add plan</button>
+                </div>
+            </div>
+            <div class="list" id="plansList"></div>
+
+            <hr style="border-color: var(--border); margin: 1rem 0;" />
+
+            <div class="section-header">
+                <h2 id="goalsTitle">Goals</h2>
+                <div class="section-actions">
+                    <button class="btn btn-success" id="btn-add-goal">Add goal</button>
+                </div>
+            </div>
+            <div class="list" id="goalsList"></div>
+
+            <hr style="border-color: var(--border); margin: 1rem 0;" />
+
+            <div class="footer-tools">
+                <div class="urlbox">
+                    <button class="btn" id="btn-export">Export link</button>
+                    <button class="btn" id="btn-copy">Copy</button>
+                </div>
+                <input id="exportUrl" type="text" readonly placeholder="Exported URL will appear here…" />
+            </div>
+            <p class="hint" id="exportHint">Export saves the current state and chosen language into the URL. Opening
+                that link will restore both.</p>
+        </section>
+
+        <!-- Right: Chart -->
+        <section class="card">
+            <div class="section-header">
+                <h2 id="graphTitle">Graph</h2>
+            </div>
+            <canvas id="chart" width="1200" height="580" aria-label="Investment chart"></canvas>
+            <div class="legend" id="legend"></div>
+            <div class="tooltip" id="tooltip"></div>
+        </section>
+    </main>
+
+    <script>
+        // ---------- i18n texts ----------
+        const texts = {
+            en: {
+                title: "Investment Plans & Goals",
+                langLabel: "Language:",
+                settings: "Settings",
+                startYear: "Starting year",
+                plans: "Investment Plans",
+                addPlan: "Add plan",
+                goals: "Goals",
+                addGoal: "Add goal",
+                remove: "Remove",
+                planNamePh: "Plan name",
+                startAmount: "Starting amount",
+                monthlyDeposit: "Monthly deposit",
+                apyPercent: "APY (%)",
+                goalNamePh: "Goal name",
+                year: "Year",
+                amount: "Amount",
+                invalidBadge: "Incomplete",
+                exportBtn: "Export link",
+                copyBtn: "Copy",
+                resetBtn: "Reset",
+                exportPlaceholder: "Exported URL will appear here…",
+                exportHint: "Export saves the current state into the URL. Opening that link will restore it.",
+                graphTitle: "Graph",
+                planDefault: "Plan",
+                goalDefault: "Goal",
+                tooltipYear: "Year"
+            },
+            he: {
+                title: "תוכניות השקעה ויעדים",
+                langLabel: "שפה:",
+                settings: "הגדרות",
+                startYear: "שנת התחלה",
+                plans: "תוכניות השקעה",
+                addPlan: "הוסף תוכנית",
+                goals: "יעדים",
+                addGoal: "הוסף יעד",
+                remove: "הסר",
+                planNamePh: "שם תוכנית",
+                startAmount: "סכום התחלה",
+                monthlyDeposit: "הפקדה חודשית",
+                apyPercent: "תשואה שנתית (%)",
+                goalNamePh: "שם יעד",
+                year: "שנה",
+                amount: "סכום",
+                invalidBadge: "לא תקין",
+                exportBtn: "שמירת קישור",
+                copyBtn: "העתק",
+                resetBtn: "איפוס",
+                exportPlaceholder: "הקישור יופיע כאן…",
+                exportHint: "הייצוא שומר את המצב ל-URL. פתיחת הקישור תשחזר את המצב.",
+                graphTitle: "גרף",
+                planDefault: "תוכנית",
+                goalDefault: "יעד",
+                tooltipYear: "שנה"
+            }
+        };
+
+        // ---------- State ----------
+        const palette = ['#22d3ee', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#60a5fa', '#f472b6', '#34d399', '#fb7185', '#a3e635'];
+        let colorCursor = 0;
+        let lang = 'en';
+
+        let state = {
+            startYear: new Date().getFullYear(),
+            plans: [], // { name|null, startAmount|null (string), monthlyDeposit|null (string), apyPercent|null (string), color }
+            goals: []  // { name|null, year|null (string), amount|null (string) }
+        };
+
+        let chartGeom = null;
+
+        // ---------- Helpers ----------
+        function nextColor() {
+            const c = palette[colorCursor % palette.length];
+            colorCursor++;
+            return c;
+        }
+        function ensurePlanColors() {
+            state.plans.forEach(p => { if (!p.color) p.color = nextColor(); });
+        }
+        function fmt(n) {
+            const num = Number(n);
+            if (!isFinite(num)) return String(n);
+            return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        function clampYear(val) {
+            const y = Math.round(Number(val));
+            if (!isFinite(y)) return new Date().getFullYear();
+            return Math.min(9999, Math.max(1900, y));
+        }
+        const isFilledNumber = (v) => v !== null && v !== '' && isFinite(Number(v));
+        function isValidPlan(p) {
+            return isFilledNumber(p.startAmount) && isFilledNumber(p.monthlyDeposit) && isFilledNumber(p.apyPercent);
+        }
+        function isValidGoal(g) {
+            return isFilledNumber(g.year) && isFilledNumber(g.amount);
+        }
+        function truncateText(text, maxLen) {
+            if (text.length <= maxLen) return text;
+            return text.slice(0, maxLen - 1) + '…';
+        }
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // ---------- i18n apply ----------
+        function applyLang() {
+            const t = texts[lang];
+            document.documentElement.lang = lang;
+            document.body.setAttribute('dir', lang === 'he' ? 'rtl' : 'ltr');
+
+            // Header & labels
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('langLabel').textContent = t.langLabel;
+            document.getElementById('settingsTitle').textContent = t.settings;
+            document.getElementById('startYearLabel').textContent = t.startYear;
+            document.getElementById('plansTitle').textContent = t.plans;
+            document.getElementById('goalsTitle').textContent = t.goals;
+            document.getElementById('btn-add-plan').textContent = t.addPlan;
+            document.getElementById('btn-add-goal').textContent = t.addGoal;
+            document.getElementById('btn-export').textContent = t.exportBtn;
+            document.getElementById('btn-copy').textContent = t.copyBtn;
+            document.getElementById('btn-reset').textContent = t.resetBtn;
+            document.getElementById('exportUrl').placeholder = t.exportPlaceholder;
+            document.getElementById('graphTitle').textContent = t.graphTitle;
+            document.getElementById('exportHint').textContent = t.exportHint;
+
+            renderLists();  // re-render labels & placeholders
+            drawChart();    // redraw chart
+        }
+
+        document.getElementById('langSelect').addEventListener('change', e => {
+            lang = e.target.value;
+            applyLang();
+        });
+
+        // ---------- Lists (inline editing, no focus loss) ----------
+        function renderLists() {
+            ensurePlanColors();
+            const t = texts[lang];
+
+            // Plans
+            const plansEl = document.getElementById('plansList');
+            plansEl.innerHTML = '';
+            state.plans.forEach((p, idx) => {
+                const valid = isValidPlan(p);
+                const labelText = p.name ?? '';
+
+                const div = document.createElement('div');
+                div.className = 'item' + (valid ? '' : ' invalid');
+                div.innerHTML = `
+        <div>
+          <div class="header">
+            <span class="swatch" style="background:${p.color}"></span>
+            <input type="text" class="name-input" placeholder="${escapeHtml(t.planNamePh)}" value="${escapeHtml(labelText)}" data-field="name" data-idx="${idx}" />
+            <span class="badge-invalid ${valid ? 'hidden' : ''}">${escapeHtml(t.invalidBadge)}</span>
+          </div>
+          <div class="meta-grid">
+            <div>
+              <label>${escapeHtml(t.startAmount)}</label>
+              <input type="number" inputmode="decimal" step="0.01" value="${p.startAmount ?? ''}" data-field="startAmount" data-idx="${idx}" />
+            </div>
+            <div>
+              <label>${escapeHtml(t.monthlyDeposit)}</label>
+              <input type="number" inputmode="decimal" step="0.01" value="${p.monthlyDeposit ?? ''}" data-field="monthlyDeposit" data-idx="${idx}" />
+            </div>
+            <div>
+              <label>${escapeHtml(t.apyPercent)}</label>
+              <input type="number" inputmode="decimal" step="0.0001" value="${p.apyPercent ?? ''}" data-field="apyPercent" data-idx="${idx}" />
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-danger" data-idx="${idx}" aria-label="${escapeHtml(t.remove)}">${escapeHtml(t.remove)}</button>
+      `;
+
+                // Remove
+                div.querySelector('button').addEventListener('click', (ev) => {
+                    const i = Number(ev.currentTarget.dataset.idx);
+                    state.plans.splice(i, 1);
+                    renderLists();
+                    drawChart();
+                });
+
+                // Inline edit handlers (no re-render on input)
+                const itemEl = div;
+                const invalidBadge = itemEl.querySelector('.badge-invalid');
+
+                div.querySelectorAll('input').forEach(inp => {
+                    const field = inp.dataset.field;
+                    inp.addEventListener('input', (ev) => {
+                        const i = Number(ev.target.dataset.idx);
+                        const raw = ev.target.value;
+
+                        if (field === 'name') {
+                            state.plans[i][field] = raw;              // preserve spaces
+                        } else {
+                            state.plans[i][field] = raw === '' ? null : raw; // raw numeric strings (allow "12.")
+                        }
+
+                        const nowValid = isValidPlan({
+                            startAmount: state.plans[i].startAmount,
+                            monthlyDeposit: state.plans[i].monthlyDeposit,
+                            apyPercent: state.plans[i].apyPercent
+                        });
+                        itemEl.classList.toggle('invalid', !nowValid);
+                        invalidBadge.classList.toggle('hidden', nowValid);
+
+                        drawChart();
+                    });
+                });
+
+                plansEl.appendChild(div);
+            });
+
+            // Goals
+            const goalsEl = document.getElementById('goalsList');
+            goalsEl.innerHTML = '';
+            state.goals.forEach((g, idx) => {
+                const valid = isValidGoal(g);
+                const labelText = g.name ?? '';
+
+                const div = document.createElement('div');
+                div.className = 'item' + (valid ? '' : ' invalid');
+                div.innerHTML = `
+        <div>
+          <div class="header">
+            <input type="text" class="name-input" placeholder="${escapeHtml(t.goalNamePh)}" value="${escapeHtml(labelText)}" data-field="name" data-idx="${idx}" />
+            <span class="badge-invalid ${valid ? 'hidden' : ''}">${escapeHtml(t.invalidBadge)}</span>
+          </div>
+          <div class="meta-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div>
+              <label>${escapeHtml(t.year)}</label>
+              <input type="number" inputmode="numeric" value="${g.year ?? ''}" data-field="year" data-idx="${idx}" />
+            </div>
+            <div>
+              <label>${escapeHtml(t.amount)}</label>
+              <input type="number" inputmode="decimal" step="0.01" value="${g.amount ?? ''}" data-field="amount" data-idx="${idx}" />
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-danger" data-idx="${idx}" aria-label="${escapeHtml(t.remove)}">${escapeHtml(t.remove)}</button>
+      `;
+
+                // Remove
+                div.querySelector('button').addEventListener('click', (ev) => {
+                    const i = Number(ev.currentTarget.dataset.idx);
+                    state.goals.splice(i, 1);
+                    renderLists();
+                    drawChart();
+                });
+
+                // Inline edit handlers (no re-render on input)
+                const itemEl = div;
+                const invalidBadge = itemEl.querySelector('.badge-invalid');
+
+                div.querySelectorAll('input').forEach(inp => {
+                    const field = inp.dataset.field;
+                    inp.addEventListener('input', (ev) => {
+                        const i = Number(ev.target.dataset.idx);
+                        const raw = ev.target.value;
+
+                        if (field === 'name') {
+                            state.goals[i][field] = raw; // preserve spaces
+                        } else {
+                            state.goals[i][field] = raw === '' ? null : raw;
+                        }
+
+                        const nowValid = isValidGoal({
+                            year: state.goals[i].year,
+                            amount: state.goals[i].amount
+                        });
+                        itemEl.classList.toggle('invalid', !nowValid);
+                        invalidBadge.classList.toggle('hidden', nowValid);
+
+                        drawChart();
+                    });
+
+                    if (field === 'year') {
+                        // Clamp on blur (not while typing)
+                        inp.addEventListener('blur', (ev) => {
+                            const i = Number(ev.target.dataset.idx);
+                            const raw = ev.target.value;
+                            if (raw !== '') {
+                                const clamped = clampYear(raw);
+                                state.goals[i].year = String(clamped);
+                                ev.target.value = String(clamped);
+                                const nowValid = isValidGoal({
+                                    year: state.goals[i].year,
+                                    amount: state.goals[i].amount
+                                });
+                                itemEl.classList.toggle('invalid', !nowValid);
+                                invalidBadge.classList.toggle('hidden', nowValid);
+                                drawChart();
+                            }
+                        });
+                    }
+                });
+
+                goalsEl.appendChild(div);
+            });
+        }
+
+        // ---------- Computation ----------
+        function computeSeries() {
+            const startYear = clampYear(state.startYear);
+
+            // Valid goals as numbers
+            const validGoals = state.goals
+                .filter(g => isValidGoal(g))
+                .map(g => ({ name: g.name ?? null, year: Number(g.year), amount: Number(g.amount) }));
+
+            // End year
+            let endYear;
+            if (validGoals.length > 0) {
+                const lastGoalYear = Math.max(...validGoals.map(g => g.year));
+                endYear = lastGoalYear + 1;
+            } else {
+                endYear = startYear + 10;
+            }
+            const years = [];
+            for (let y = startYear; y <= endYear; y++) years.push(y);
+
+            // Goals per year & names
+            const goalsByYear = new Map();
+            const goalNamesByYear = new Map();
+            validGoals.forEach(g => {
+                goalsByYear.set(g.year, (goalsByYear.get(g.year) || 0) + g.amount);
+                const arr = goalNamesByYear.get(g.year) || [];
+                arr.push(g.name ?? (lang === 'he' ? 'יעד' : 'Goal'));
+                goalNamesByYear.set(g.year, arr);
+            });
+
+            // Valid plans as numbers
+            const validPlans = state.plans
+                .filter(isValidPlan)
+                .map((p, idx) => ({
+                    name: (p.name && p.name.trim() !== '') ? p.name : (lang === 'he' ? `תוכנית ${idx + 1}` : `Plan ${idx + 1}`),
+                    color: p.color || palette[idx % palette.length],
+                    startAmount: Number(p.startAmount),
+                    monthlyDeposit: Number(p.monthlyDeposit),
+                    apyPercent: Number(p.apyPercent)
+                }));
+
+            const series = [];
+
+            validPlans.forEach(p => {
+                const apyDecimal = p.apyPercent / 100;
+                const monthlyRate = Math.pow(1 + apyDecimal, 1 / 12) - 1;
+
+                let balanceStart = p.startAmount; // pre-goal start-of-year
+                const monthlyDeposit = p.monthlyDeposit;
+
+                const values = [];
+                years.forEach((year) => {
+                    const goalAmt = goalsByYear.get(year) || 0;
+
+                    // Displayed value = start-of-year minus goal
+                    values.push({ year, value: balanceStart - goalAmt });
+
+                    // Carry-forward: subtract goal, then compound monthly
+                    let balanceAfterGoal = balanceStart - goalAmt;
+                    for (let m = 0; m < 12; m++) {
+                        balanceAfterGoal = (balanceAfterGoal + monthlyDeposit) * (1 + monthlyRate);
+                    }
+                    balanceStart = balanceAfterGoal;
+                });
+
+                series.push({ label: p.name, color: p.color, values });
+            });
+
+            return { years, series, goalNamesByYear };
+        }
+
+        // ---------- Chart drawing ----------
+        function drawChart(hoverIndex = null) {
+            const canvas = document.getElementById('chart');
+            const ctx = canvas.getContext('2d');
+
+            const dpr = window.devicePixelRatio || 1;
+            const cssW = canvas.clientWidth;
+            const cssH = canvas.clientHeight;
+            canvas.width = Math.floor(cssW * dpr);
+            canvas.height = Math.floor(cssH * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            ctx.clearRect(0, 0, cssW, cssH);
+
+            const { years, series, goalNamesByYear } = computeSeries();
+
+            // Y range across series
+            let minY = 0, maxY = 0;
+            series.forEach(s => s.values.forEach(v => {
+                minY = Math.min(minY, v.value);
+                maxY = Math.max(maxY, v.value);
+            }));
+            if (minY > 0) minY = 0;
+            if (maxY < 0) maxY = 0;
+            if (maxY === minY) maxY = minY + 1;
+
+            const yPad = (maxY - minY) * 0.08;
+            minY -= yPad; maxY += yPad;
+
+            const margin = { top: 24, right: 20, bottom: 70, left: 90 };
+            const plotW = cssW - margin.left - margin.right;
+            const plotH = cssH - margin.top - margin.bottom;
+
+            const xToPx = (yearIndex) => margin.left + (plotW * (yearIndex / (years.length - 1 || 1)));
+            const yToPx = (value) => {
+                const t = (value - minY) / (maxY - minY);
+                return margin.top + (plotH * (1 - t));
+            };
+
+            chartGeom = { years, series, margin, plotW, plotH, cssW, cssH, xToPx, yToPx };
+
+            // Background
+            ctx.fillStyle = '#0b1120';
+            ctx.fillRect(margin.left, margin.top, plotW, plotH);
+
+            // Axes
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top + plotH);
+            ctx.lineTo(margin.left + plotW, margin.top + plotH);
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + plotH);
+            ctx.stroke();
+
+            // X ticks + goal names under labels
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            years.forEach((y, i) => {
+                const x = xToPx(i);
+                ctx.strokeStyle = '#1f2937';
+                ctx.beginPath();
+                ctx.moveTo(x, margin.top);
+                ctx.lineTo(x, margin.top + plotH);
+                ctx.stroke();
+
+                const yearY = margin.top + plotH + 6;
+                ctx.font = '12px system-ui, sans-serif';
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillText(String(y), x, yearY);
+
+                const names = goalNamesByYear.get(y) || [];
+                if (names.length > 0) {
+                    ctx.font = '11px system-ui, sans-serif';
+                    ctx.fillStyle = '#9ca3af';
+                    // Draw each goal name on its own line
+                    names.forEach((name, idx) => {
+                        const truncated = truncateText(name, 21);
+                        ctx.fillText(truncated, x, yearY + 14 + idx * 14);
+                    });
+                }
+            });
+
+            // Y ticks
+            const tickCount = 6;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.font = '12px system-ui, sans-serif';
+            for (let t = 0; t <= tickCount; t++) {
+                const v = minY + (t / tickCount) * (maxY - minY);
+                const ypx = yToPx(v);
+                ctx.strokeStyle = '#1f2937';
+                ctx.beginPath();
+                ctx.moveTo(margin.left, ypx);
+                ctx.lineTo(margin.left + plotW, ypx);
+                ctx.stroke();
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillText(fmt(v), margin.left - 6, ypx);
+            }
+
+            // Bold zero line
+            const zeroY = yToPx(0);
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--zero-line').trim() || '#e5e7eb';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, zeroY);
+            ctx.lineTo(margin.left + plotW, zeroY);
+            ctx.stroke();
+
+            // Series
+            series.forEach(s => {
+                ctx.strokeStyle = s.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                s.values.forEach((pt, i) => {
+                    const x = xToPx(i);
+                    const y = yToPx(pt.value);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+
+                // markers
+                ctx.fillStyle = s.color;
+                s.values.forEach((pt, i) => {
+                    const x = xToPx(i);
+                    const y = yToPx(pt.value);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            });
+
+            // Hover overlay
+            if (hoverIndex !== null && hoverIndex >= 0 && hoverIndex < years.length) {
+                const hoverX = xToPx(hoverIndex);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(hoverX, margin.top);
+                ctx.lineTo(hoverX, margin.top + plotH);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                series.forEach(s => {
+                    const pt = s.values[hoverIndex];
+                    const x = hoverX;
+                    const y = yToPx(pt.value);
+                    ctx.fillStyle = s.color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#0008';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                });
+            }
+
+            // Legend
+            const legendEl = document.getElementById('legend');
+            legendEl.innerHTML = '';
+            series.forEach(s => {
+                const entry = document.createElement('span');
+                entry.className = 'entry';
+                const swatch = document.createElement('span');
+                swatch.className = 'swatch';
+                swatch.style.background = s.color;
+                entry.appendChild(swatch);
+                const label = document.createElement('span');
+                label.textContent = s.label;
+                entry.appendChild(label);
+                legendEl.appendChild(entry);
+            });
+        }
+
+        // ---------- Tooltip ----------
+        function showTooltipFromMouse(evt) {
+            if (!chartGeom) return;
+            const { years, series, margin, plotW } = chartGeom;
+            const rect = evt.target.getBoundingClientRect();
+            const x = evt.clientX - rect.left;
+
+            if (x < margin.left || x > margin.left + plotW) {
+                hideTooltip();
+                drawChart(null);
+                return;
+            }
+
+            const t = (x - margin.left) / plotW;
+            let idx = Math.round(t * (years.length - 1));
+            idx = Math.max(0, Math.min(years.length - 1, idx));
+
+            drawChart(idx);
+
+            const tooltip = document.getElementById('tooltip');
+            const year = years[idx];
+            const html = [];
+            const yearLabel = texts[lang].tooltipYear;
+            html.push(`<div class="title">${escapeHtml(yearLabel)}: ${year}</div>`);
+            series.forEach(s => {
+                const val = s.values[idx].value;
+                html.push(
+                    `<div class="row">
+          <span class="dot" style="background:${s.color}"></span>
+          <span>${escapeHtml(s.label)}:</span>
+          <strong>${fmt(val)}</strong>
+        </div>`
+                );
+            });
+            tooltip.innerHTML = html.join('');
+
+            const cardRect = tooltip.parentElement.getBoundingClientRect();
+            const pad = 12;
+            let left = evt.clientX - cardRect.left + 14;
+            let top = evt.clientY - cardRect.top + 14;
+
+            tooltip.style.display = 'block';
+            const tw = tooltip.offsetWidth;
+            const th = tooltip.offsetHeight;
+            if (left + tw + pad > cardRect.width) left = cardRect.width - tw - pad;
+            if (top + th + pad > cardRect.height) top = cardRect.height - th - pad;
+
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        }
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.display = 'none';
+        }
+
+        // ---------- Export / Import ----------
+        function encodeState(s) {
+            const json = JSON.stringify(s);
+            return btoa(unescape(encodeURIComponent(json)));
+        }
+        function decodeState(b64) {
+            try {
+                const json = decodeURIComponent(escape(atob(b64)));
+                return JSON.parse(json);
+            } catch (e) {
+                console.warn('Failed to decode state:', e);
+                return null;
+            }
+        }
+
+        // ---------- Wire up UI ----------
+        document.getElementById('startYear').addEventListener('input', (ev) => {
+            state.startYear = clampYear(ev.target.value);
+            drawChart();
+        });
+
+        // Add plan with default name
+        document.getElementById('btn-add-plan').addEventListener('click', () => {
+            const t = texts[lang];
+            const n = state.plans.length + 1;
+            state.plans.push({
+                name: `${t.planDefault} ${n}`,
+                startAmount: null,
+                monthlyDeposit: null,
+                apyPercent: null,
+                color: nextColor()
+            });
+            renderLists();
+            drawChart();
+        });
+
+        // Add goal with default name
+        document.getElementById('btn-add-goal').addEventListener('click', () => {
+            const t = texts[lang];
+            const n = state.goals.length + 1;
+            state.goals.push({ name: `${t.goalDefault} ${n}`, year: null, amount: null });
+            renderLists();
+            drawChart();
+        });
+
+        // Export link (includes language)
+        document.getElementById('btn-export').addEventListener('click', () => {
+            const out = document.getElementById('exportUrl');
+            const url = new URL(window.location.href);
+            url.searchParams.set('state', encodeState(state));
+            url.searchParams.set('lang', lang);
+            out.value = url.toString();
+        });
+
+        // Copy export URL
+        document.getElementById('btn-copy').addEventListener('click', async () => {
+            const out = document.getElementById('exportUrl');
+            if (!out.value) return;
+            try {
+                await navigator.clipboard.writeText(out.value);
+                const btn = document.getElementById('btn-copy');
+                btn.textContent = lang === 'he' ? 'הועתק!' : 'Copied!';
+                setTimeout(() => { btn.textContent = texts[lang].copyBtn; }, 1200);
+            } catch (e) {
+                out.select();
+                document.execCommand('copy');
+            }
+        });
+
+        // Reset button: clears all state except language
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            // Reset state to initial values, keep language
+            state = {
+                startYear: new Date().getFullYear(),
+                plans: [],
+                goals: []
+            };
+            document.getElementById('startYear').value = state.startYear;
+            renderLists();
+            drawChart();
+        });
+
+        // Canvas hover events
+        const canvas = document.getElementById('chart');
+        canvas.addEventListener('mousemove', showTooltipFromMouse);
+        canvas.addEventListener('mouseleave', () => { hideTooltip(); drawChart(null); });
+
+        // ---------- Init (import from URL) ----------
+        (function init() {
+            state.startYear = new Date().getFullYear();
+            document.getElementById('startYear').value = state.startYear;
+
+            const params = new URLSearchParams(window.location.search);
+            const s = params.get('state');
+            const l = params.get('lang');
+            if (l === 'he' || l === 'en') {
+                lang = l;
+                document.getElementById('langSelect').value = lang;
+            }
+            if (s) {
+                const parsed = decodeState(s);
+                if (parsed && typeof parsed === 'object') {
+                    state.startYear = clampYear(parsed.startYear);
+                    state.plans = Array.isArray(parsed.plans) ? parsed.plans.map(p => ({
+                        name: (p.name === null) ? null : String(p.name),
+                        startAmount: (p.startAmount === null || p.startAmount === '') ? null : String(p.startAmount),
+                        monthlyDeposit: (p.monthlyDeposit === null || p.monthlyDeposit === '') ? null : String(p.monthlyDeposit),
+                        apyPercent: (p.apyPercent === null || p.apyPercent === '') ? null : String(p.apyPercent),
+                        color: p.color || nextColor()
+                    })) : [];
+                    state.goals = Array.isArray(parsed.goals) ? parsed.goals.map(g => ({
+                        name: (g.name === null) ? null : String(g.name),
+                        year: (g.year === null || g.year === '') ? null : String(g.year),
+                        amount: (g.amount === null || g.amount === '') ? null : String(g.amount)
+                    })) : [];
+                    document.getElementById('startYear').value = state.startYear;
+                }
+            }
+
+            applyLang(); // sets labels & direction
+            renderLists();
+            drawChart();
+        })();
+    </script>
 </body>
 
 </html>
