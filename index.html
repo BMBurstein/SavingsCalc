@@ -344,8 +344,8 @@
         <div class="lang">
             <label for="langSelect" id="langLabel">Language:</label>
             <select id="langSelect">
-                <option value="en">English</option>
-                <option value="he">עברית</option>
+              <option value="he">עברית</option>
+              <option value="en">English</option>
             </select>
             <button class="btn btn-danger" id="btn-reset" style="margin-left:0.5rem;">Reset</button>
         </div>
@@ -472,7 +472,7 @@
         // ---------- State ----------
         const palette = ['#22d3ee', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#60a5fa', '#f472b6', '#34d399', '#fb7185', '#a3e635'];
         let colorCursor = 0;
-        let lang = 'en';
+        let lang = 'he'; // default language
 
         let state = {
             startYear: new Date().getFullYear(),
