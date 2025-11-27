@@ -335,6 +335,20 @@
             border: 1px solid #0006;
             display: inline-block;
         }
+
+        /* For WebKit browsers (Chrome, Safari, Edge, Opera) */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            /* For Firefox */
+            -moz-appearance: textfield;
+            /* General appearance property for other browsers */
+            appearance: textfield;
+        }
     </style>
 </head>
 
@@ -344,8 +358,8 @@
         <div class="lang">
             <label for="langSelect" id="langLabel">Language:</label>
             <select id="langSelect">
-              <option value="he">עברית</option>
-              <option value="en">English</option>
+                <option value="he">עברית</option>
+                <option value="en">English</option>
             </select>
             <button class="btn btn-danger" id="btn-reset" style="margin-left:0.5rem;">Reset</button>
         </div>
@@ -571,15 +585,15 @@
           <div class="meta-grid">
             <div>
               <label>${escapeHtml(t.startAmount)}</label>
-              <input type="number" inputmode="decimal" step="0.01" value="${p.startAmount ?? ''}" data-field="startAmount" data-idx="${idx}" />
+              <input type="number" inputmode="decimal" value="${p.startAmount ?? ''}" data-field="startAmount" data-idx="${idx}" />
             </div>
             <div>
               <label>${escapeHtml(t.monthlyDeposit)}</label>
-              <input type="number" inputmode="decimal" step="0.01" value="${p.monthlyDeposit ?? ''}" data-field="monthlyDeposit" data-idx="${idx}" />
+              <input type="number" inputmode="decimal" value="${p.monthlyDeposit ?? ''}" data-field="monthlyDeposit" data-idx="${idx}" />
             </div>
             <div>
               <label>${escapeHtml(t.apyPercent)}</label>
-              <input type="number" inputmode="decimal" step="0.0001" value="${p.apyPercent ?? ''}" data-field="apyPercent" data-idx="${idx}" />
+              <input type="number" inputmode="decimal" step="0.01" value="${p.apyPercent ?? ''}" data-field="apyPercent" data-idx="${idx}" />
             </div>
           </div>
         </div>
@@ -647,7 +661,7 @@
             </div>
             <div>
               <label>${escapeHtml(t.amount)}</label>
-              <input type="number" inputmode="decimal" step="0.01" value="${g.amount ?? ''}" data-field="amount" data-idx="${idx}" />
+              <input type="number" inputmode="decimal" value="${g.amount ?? ''}" data-field="amount" data-idx="${idx}" />
             </div>
           </div>
         </div>
