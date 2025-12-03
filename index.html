@@ -68,14 +68,6 @@
             gap: .5rem;
         }
 
-        header select {
-            padding: 0.45rem 0.6rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #0b1429;
-            color: var(--text);
-        }
-
         main {
             display: grid;
             grid-template-columns: 380px 1fr;
@@ -206,9 +198,6 @@
         .name-input {
             width: 60%;
             max-width: 240px;
-            background: #0b1223;
-            border: 1px solid var(--border);
-            color: var(--text);
             border-radius: 6px;
             padding: 0.3rem 0.4rem;
             font-size: 0.85rem;
@@ -231,10 +220,6 @@
         .meta-grid input {
             width: 100%;
             padding: 0.45rem 0.6rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #0b1223;
-            color: var(--text);
         }
 
         canvas {
@@ -288,10 +273,6 @@
         #exportUrl {
             width: 100%;
             padding: .45rem .6rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: #0b1223;
-            color: var(--text);
         }
 
         .hint {
@@ -334,6 +315,14 @@
             border-radius: 50%;
             border: 1px solid #0006;
             display: inline-block;
+        }
+
+        input, select {
+            border: 1px solid var(--muted);
+            border-radius: 8px;
+            background: #0b1223;
+            padding: .45rem .6rem;
+            color: var(--text);
         }
 
         /* For WebKit browsers (Chrome, Safari, Edge, Opera) */
